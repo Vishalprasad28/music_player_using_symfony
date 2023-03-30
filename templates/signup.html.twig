@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="style/stylesheet.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=Quicksand:wght@300;400;500;700&display=swap" rel="stylesheet">
+		<title>Document</title>
+	</head>
+	<body>
+  <div class="container flexing">
+      <div class="container-extended flexing flex-justify-between">
+        <div class="left">
+        <form action="/postSignUp" id="signUpForm" method="post">
+          <img src="assets/lightbluelogo.png" class="form-inline-logo" alt="">
+          <h1>Sign up</h1>
+          <label for="fname">First Name</label>
+          <input type="text" name="fname"id="fname" required>
+          <p id="fname-error">&nbsp;</p>
+          <label for="lname">Last Name</label>
+          <input type="text" name="lname"id="lname" required>
+          <p id="lname-error">&nbsp;</p>
+          <label for="email">Email</label>
+          <input type="email" name="email"id="email" required>
+          <p id="email-error">&nbsp;</p>
+          <label for="phone">Phone</label>
+          <input type="text" name="phone"id="phone" maxlength="13" required>
+          <p id="phone-error">&nbsp;</p>
+          <label for="uname">User Name</label>
+          <input type="text" name="uname" id="uname" required>
+          <p id="fname-error">&nbsp;</p>
+          <div id="pwd-container">
+            <i class="fa-regular fa-eye eye-open-icon hide-icon"></i>  
+            <i class="fa-sharp fa-regular fa-eye-slash eye-close-icon"></i>
+            <label for="pwd">Password</label>
+            <input type="password" name="pwd" id="pwd" required>
+          </div>
+          <p id="pwd-error">&nbsp;</p>
+          <div id="pwd-container">
+            <i class="fa-regular fa-eye eye-open-icon hide-icon"></i>  
+            <i class="fa-sharp fa-regular fa-eye-slash eye-close-icon"></i>
+            <label for="conf-pwd">Confirm Password</label>
+            <input type="password" name="confPwd" id="conf-pwd" required>
+          </div>
+          <p id="conf-pwd-error">&nbsp;</p>
+          <label for="checklist">Select Interest</label>
+          <div class="flexing" id="checklist">
+            <input type="checkbox" class="genere" name="pop"> POP
+            <input type="checkbox" class="genere" name="hiphop">hiphop
+            <input type="checkbox" class="genere" name="romantic">romantic
+            <input type="checkbox" class="genere" name="dancing"> Dancing
+          </div>
+          <button name="signup" type="submit" id="submit">Sign up</button>
+          <br>
+          <div class="error-box">
+            <p>
+            &nbsp;
+            </p>
+          </div>
+        </form>
+        </div>
+        <div class="right">
+        <img src="assets/headphone.png" alt="">
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="js/livevalidation.js"></script>
+  <script src="js/formValidator.js"></script>
+  {# <script src="js/signupvalidation.js"></script> #}
+</html>

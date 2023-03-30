@@ -1,0 +1,257 @@
+:root{
+  --primary-text-color:white;
+  --secondary-text-color: rgb(206, 206, 206);
+  --primary-color: rgba(255,68,254,255);
+  --secondary-color: rgba(13,7,55,255);
+  --glowing-blue: #01ffff;
+  --black-shade: rgb(15, 15, 15);
+}
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  list-style: none;
+  transition: all 0.5s ease-in-out;
+  /* border: 1px solid red; */
+}
+body {
+  min-height: 100vh;
+  min-width: 100vw;
+  background-color:rgb(15, 15, 15);
+  background-repeat: no-repeat;
+  background-size:cover;
+  background-position: center;
+  backdrop-filter: blur(5px);
+  color:var(--primary-text-color);
+  font-family: 'Nanum Gothic', sans-serif;
+  font-family: 'Quicksand', sans-serif;
+}
+.container{
+  min-height: 100vh;
+  max-width: 1180px;
+  width: 100%;
+  margin: auto;
+}
+.flex-justify-between {
+  justify-content: space-between;
+}
+.flex-justify{
+  justify-content: center;
+}
+.flexing{
+  display: flex;
+  align-items: center;
+}
+.wrapping{
+  flex-wrap: wrap;
+}
+.right,.left{
+  max-width: 570px;
+  width: 100%;
+  height: 100%;
+}
+.left{
+  border-radius: 5px;
+}
+.container-extended{
+ padding:1rem;
+ border: 1px solid var(--glowing-blue);
+ background-color: rgba(0, 0, 0, 0.325);
+ border-radius: 10px;
+ width: 100%;
+ gap: 1rem;
+}
+.right img{
+  width: 100%;
+  /* object-fit: cover; */
+}
+.flex-column{
+  flex-direction: column;
+}
+.logo{
+  width: 200px;
+  opacity: 100%;
+  filter: multiply;
+}
+.logotxt{
+width: 700px;
+}
+.logotxt,.subtitle,.buttons,.logo{
+  margin-top: 2rem;
+}
+.subtitle{
+  font-size: 1.5rem;
+}
+.buttons{
+  gap: 1rem;
+}
+.buttons a {
+  color: var(--secondary-color);
+  background-color: var(--primary-text-color);
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+}
+.buttons a:hover{
+  background-color: var(--glowing-blue);
+  color: var(--black-shade)
+}
+form {
+  /* border: 1px solid var(--glowing-blue); */
+  height: 100%;
+  color: var(--primary-text-color);
+  padding: 2rem 4rem;
+  width: 100%;
+}
+form h1{
+  margin-bottom: 1rem;
+  /* text-align: center; */
+}
+#pwd-container {
+  position:relative;
+}
+#email,#pwd,#fname,#lname,#conf-pwd,#fullname,#phone,#uname{
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  display: block;
+  color: var(--primary-text-color);
+  font-size: 1rem;
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--primary-text-color);
+  background:none;
+  outline: none;
+}
+label {
+  font-weight: bold;
+}
+input,button{
+  margin-bottom: 0.5rem;
+}
+button {
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+.error-msg{
+  display: block !important;
+  color: red;
+  text-shadow: 0 0 5px red;
+}
+#submit{
+  color: black;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  background-color:white;
+  display: block;
+  cursor: pointer;
+  width: 50%;
+  margin: 1rem auto 0 auto;
+}
+#submit img{
+  width: 30px;
+}
+#submit:hover{
+  filter: invert();
+}
+.error-box{
+  text-align: center;
+  font-size: 1.5rem;
+}
+.error-box p {
+  color: var(--primary-color);
+}
+.valid-input{
+  border-bottom: 2px solid var(--primary-color);
+}
+.forgot-pwd{
+  color: var(--primary-text-color);
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.eye-open-icon,.eye-close-icon {
+  position: absolute;
+  bottom: 0;
+  padding: 0.5rem;
+  font-size: 1rem;
+  right: 0;
+  cursor: pointer;
+}
+.hide-icon {
+  display: none !important;
+}
+.form-inline-logo{
+  width: 70px;
+  margin-bottom: 0.7rem;
+}
+#checklist {
+  margin: 1rem 0;
+  gap:1rem;
+}
+.profile-pic-container{
+  z-index: 1;
+  width: 200px;
+  height: 200px;
+  border-radius:50%;
+  border: 8px solid var(--primary-text-color);
+}
+.profile-pic-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+.contacts{
+  gap: 2rem;
+  padding: 1rem;
+}
+.interests{
+  margin-bottom: 1rem;
+  font-size: larger;
+  color: var(--secondary-text-color);
+}
+.user-fullname{
+  color: var(--glowing-blue);
+  margin-top: 0.5rem;
+}
+.profile-page .container{
+  z-index: 1000;
+}
+.profile-page .container::before{
+  content:"";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  width:100px;
+  height:100px;
+  opacity: 10%;
+  background-image: url(/public/assets/lightbluelogo.png);
+  background-size: 700px 700px;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  
+}
+.nav-profile-pic{
+  height:60px;
+  width:60px;
+  border-radius: 50%;
+  border : 4px solid var(--glowing-blue);
+  
+  }
+  .nav-profile-pic img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+  }
+  .error-page{
+    font-size: 3rem;
+  }
