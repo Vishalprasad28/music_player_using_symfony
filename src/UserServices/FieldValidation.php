@@ -2,11 +2,11 @@
 
 namespace App\UserServices;
 
-use Dotenv\Dotenv;
 use GuzzleHttp\Client;
+use Symfony\Component\Dotenv\Dotenv;
 
-$dotenv = Dotenv::createImmutable(__DIR__);
-$dotenv->load();
+$dotenv = new Dotenv();
+$dotenv->load(__DIR__ . '/.env');
 /**
  * Trait for Input Field validation
  */
@@ -104,7 +104,7 @@ trait FieldValidation {
    * 
    * @return string
    */
-  private function trimData(string $data) {
+  public function trimData(string $data) {
     $data = trim($data);
     $data = stripslashes($data);
     $data = htmlspecialchars($data);

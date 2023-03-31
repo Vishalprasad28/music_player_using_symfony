@@ -46,6 +46,12 @@ $(document).ready(function() {
           $('#submit').attr('disabled',false);
           $('#submit').html('Sign Up');
           $(".error-box p").html(data.message);
+          $(".error-box p").html(data.message);
+          if (data.message != 'Thank You') {
+          }
+          else {
+            window.location.href = '/mainpage';
+          }
         }
     });
   }

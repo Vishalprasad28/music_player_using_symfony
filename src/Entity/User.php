@@ -31,10 +31,10 @@ class User
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $interets = null;
+    private ?string $interests = null;
 
     #[ORM\Column(length: 300)]
-    private ?string $profilePic = null;
+    private ?string $profilePic = 'profilePic/default.png';
 
     #[ORM\OneToMany(mappedBy: 'likedBy', targetEntity: Like::class, orphanRemoval: true)]
     private Collection $likes;
@@ -109,14 +109,14 @@ class User
         return $this;
     }
 
-    public function getInterets(): ?string
+    public function getInterests(): ?string
     {
-        return $this->interets;
+        return $this->interests;
     }
 
-    public function setInterets(string $interets): self
+    public function setInterests(string $interets): self
     {
-        $this->interets = $interets;
+        $this->interests = $interets;
 
         return $this;
     }
