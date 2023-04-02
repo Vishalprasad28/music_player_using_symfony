@@ -44,13 +44,13 @@ trait FieldValidation {
    * @return bool
    */
   private function contactValidation() {
-    if ($this->contact == '') {
+    if ($this->phone == '') {
       return FALSE;
     }
-    elseif(strlen($this->contact)>13){
+    elseif(strlen($this->phone)>13){
       return FALSE;
     }
-    elseif(!preg_match("/[+][9][1][6-9][0-9]{9}/",$this->contact)){
+    elseif(!preg_match("/[+][9][1][6-9][0-9]{9}/",$this->phone)){
       return FALSE;
     }
     else {
@@ -116,7 +116,7 @@ trait FieldValidation {
    * 
    * @return bool
    */
-  private function validateEmail(){
+  public function validateEmail(){
     if ($this->email == '') {
       return FALSE;
     }

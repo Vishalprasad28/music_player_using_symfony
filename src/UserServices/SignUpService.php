@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class SignUpService extends SignUp {
   
-  use FieldValidation;
+  use FieldValidation, Mailer;
 
   /**
    * COnstructor that acepts the request variable
@@ -17,6 +17,7 @@ class SignUpService extends SignUp {
    * @param Request $request
    */
   public function __construct(Request $request) {
+    $this->validInterests = array('pop','hiphop','romantic','dancing','');
     $this->fName = $this->trimData($request->request->get('fname')) ;
     $this->lName = $this->trimData($request->request->get('lname'));
     $this->email = $this->trimData($request->request->get('email'));
@@ -42,8 +43,6 @@ class SignUpService extends SignUp {
     if (isset($dancing)) {
       $this->interest = $this->interest . 'dancing,';
     }
-
-    $this->validInterests = array('pop','hiphop','romantic','dancing','');
   }
   
    /**
@@ -52,7 +51,7 @@ class SignUpService extends SignUp {
    * @return string
    */
   public function fieldValidation():string {
-    $path = 'public/profile-pictures/default.png';
+    
     if (!$this->nameValidation($this->fName) || !$this->nameValidation($this->lName)) {
       return 'Invalid Name Field formate';
     }
@@ -112,7 +111,7 @@ class SignUpService extends SignUp {
     $user = new User();
     try {
       $user->setUserName($this->userName);
-      $user->setFullName($this->fName . $this->lName);
+      $user->setFullName($this->fName . ' ' . $this->lName);
       $user->setEmail($this->email);
       $user->setPhone($this->phone);
       $hashedPwd = password_hash($this->pwd, PASSWORD_DEFAULT);
@@ -120,6 +119,10 @@ class SignUpService extends SignUp {
       $user->setInterests($this->interest);
       $em->persist($user);
       $em->flush();
+      $_SESSION['user']= serialize($user);
+      $sub = 'Radiohead.co.in Greets';
+      $body ='Thank You for joining us';
+      $this->sendMail($sub, $body);
       $message = 'Thank You';
     }
     catch (Exception $e) {

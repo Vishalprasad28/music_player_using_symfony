@@ -13,14 +13,16 @@
     <title>Document</title>
   </head>
   <body>
+  {% include "Components/navigationBar.html.twig" %}
     <div class="container">
+  {% include "Components/slidermenu.html.twig" %}
       <main class="flexing flex-justify-between">
         <div class="sidebar">
           <div class="user flexing flex-column">
             <div class="nav-profile-pic">
-              <img src="<?php echo $user->retrievePicturePath(); ?>" alt="">
+              <img src="{{picPath}}" alt="">
             </div>
-            <h2 class="user-fullname">Hii Vishal</h2>
+            <h2 class="user-fullname">Hii {{fullName}} </h2>
            </div>
           <div class="add-song">
             Add Tracks <br>
@@ -52,4 +54,5 @@
       </main>
     </div>
   </body>
+  <script src="js/postuploadvalidation.js"></script>
 </html>
