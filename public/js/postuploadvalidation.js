@@ -1,9 +1,4 @@
 $(document).ready(function(){
-  $('.add-song').click(function(){
-    $('.song-upload-form').toggleClass('form-hider');
-    $('.cross').toggleClass('cancel-btn');
-
-  });
   $('.song-upload-form').submit(function(e){
      e.preventDefault();
      $(".error-box p").html("");

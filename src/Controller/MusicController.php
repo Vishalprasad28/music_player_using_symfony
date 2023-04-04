@@ -8,6 +8,7 @@ use App\UserServices\ForgotPwdService;
 use App\UserServices\LoginService;
 use PhpParser\Node\Scalar\MagicConst\Method;
 use App\UserServices\SignUpService;
+use App\UserServices\SongUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -105,7 +106,7 @@ class MusicController extends AbstractController
        */
       #[Route('/mainpage', name: 'mainpage')]
       public function mainPage(): Response {
-        if (isset($_SESSION['login']) && isset($_COOKIE['login'])) {
+        if (isset($_SESSION['login'])) {
           $user = unserialize($_SESSION['user']);
           return $this->render('mainpage.html.twig',[
             'id' => $user->getId(),
@@ -183,7 +184,27 @@ class MusicController extends AbstractController
       }
 
       /**
-       * Fetching the Songs
+       * Uploading the Songs
        */
+      #[Route('/upload', name: 'upload')]
+      public function upload(Request $request): Response {
+        if ($request->isXmlHttpRequest()) {
+          $user = unserialize($_SESSION['user']);
+          $obj = new SongUploader($request, $user);
+          $message = $obj->fieldValidation();
+          if ($message == 'success') {
+            if (!$obj->uploadSong($this->em)) {
+              $message = 'Failed to Upload';
+            }
+            else {
+              $message = 'Uploaded';
+            }
+          }
+          return $this->json([
+            'message' => $message
+          ]);
+        }
+        return $this->render('error.html.twig');
+      }
 
 }

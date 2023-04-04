@@ -237,27 +237,23 @@ trait FieldValidation {
       return TRUE;
     }
   }
+
+  /**
+   * FUnction to validate the Auio formate
+   * 
+   * F@return bool
+   */
   private function audioFormate() {
-    if(isset($this->song)) {
-      $target_dir = '../public/audio/';
-      $file_type = $this->song["type"];
-      $file_name= $this->song["name"];
-      $file_size = $this->song["size"];
-      if ($file_type != "audio/mpeg") {
+    if(!is_null($this->song)){
+      // generate a random name for the file but keep the extension
+      $extension = $this->song->getClientOriginalExtension();
+      if ($extension != 'mp3' && $extension != 'mpeg') {
         return FALSE;
-      }
-      elseif ($file_size > 900000000) {
-        return FALSE;
-      }
-      elseif (!file_exists($target_dir . $file_name)) {
-        if (move_uploaded_file($this->song["tmp_name"] , $target_dir . $file_name)) {
-          return TRUE;
-        }
-        else {
-          return FALSE;
-        }
       }
       else {
+        $filename = uniqid().".".$this->song->getClientOriginalExtension();
+        $path = "../../public/songs/";
+        $this->song->move($path,$filename); // move the file to a path
         return TRUE;
       }
     }
