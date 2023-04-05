@@ -105,6 +105,7 @@ class SignUpService extends SignUp
    */
   private function register(EntityManagerInterface $em)
   {
+    $repository = $em->getRepository(User::class);
     $user = new User();
     try {
       $user->setUserName($this->userName);
@@ -116,7 +117,8 @@ class SignUpService extends SignUp
       $user->setInterests($this->interest);
       $em->persist($user);
       $em->flush();
-      $_SESSION['user'] = serialize($user);
+      $uId = $repository->findOneBy(['userName' => $this->userName]);
+      $_SESSION['user'] = $uId->getId();
       $sub = 'Radiohead.co.in Greets';
       $body = 'Thank You for joining us';
       $this->sendMail($sub, $body);

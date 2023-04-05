@@ -1,0 +1,26 @@
+
+<div class="song-container flexing"  song-id="{{song.id}}">
+  <div class="thumbnail" style='background-image: url("{{song.thumbnail}}");'>
+  <div class="play flexing flex-justify">
+    <i class="fa-solid fa-play"></i>
+  </div>
+  </div>
+  <div class="details">
+    <div class="user flexing">
+      <div class="nav-profile-pic">
+        <img src="{{song.profilePic}}" alt="#">
+      </div>
+      <h3>{{song.uName}} </h3>
+    </div>
+    <h1 class="song-name">{{song.songName}}</h1>
+    <p class="singer-name">{{song.singerName}}</p>
+    <div class="genere-n-likes flexing flex-justify-between">
+    <p class="genere">{{song.genere}}</p>
+    <div class="likes">
+      <i class="fa-solid fa-heart"></i>
+    <p>0</p>
+    </div>
+    </div>
+    
+  </div>
+</div>

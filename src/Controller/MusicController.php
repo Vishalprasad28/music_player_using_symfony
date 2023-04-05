@@ -4,12 +4,15 @@ namespace App\Controller;
 use App\UserServices\ResetPwdService;
 session_start();
 use App\Entity\User;
+use App\Entity\Posts;
 use App\UserServices\ForgotPwdService;
 use App\UserServices\LoginService;
 use PhpParser\Node\Scalar\MagicConst\Method;
 use App\UserServices\SignUpService;
+use App\UserServices\SongHandler;
 use App\UserServices\SongUploader;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -107,7 +110,8 @@ class MusicController extends AbstractController
       #[Route('/mainpage', name: 'mainpage')]
       public function mainPage(): Response {
         if (isset($_SESSION['login'])) {
-          $user = unserialize($_SESSION['user']);
+          $repository = $this->em->getRepository(User::class);
+          $user = $repository->findOneBy(['id' => $_SESSION['user']]);
           return $this->render('mainpage.html.twig',[
             'id' => $user->getId(),
             'fullName' => $user->getfullName(),
@@ -189,7 +193,7 @@ class MusicController extends AbstractController
       #[Route('/upload', name: 'upload')]
       public function upload(Request $request): Response {
         if ($request->isXmlHttpRequest()) {
-          $user = unserialize($_SESSION['user']);
+          $user = $_SESSION['user'];
           $obj = new SongUploader($request, $user);
           $message = $obj->fieldValidation();
           if ($message == 'success') {
@@ -207,4 +211,77 @@ class MusicController extends AbstractController
         return $this->render('error.html.twig');
       }
 
+      /**
+       * Associative array builder
+       * 
+       * @param array $array
+       * 
+       * @return array
+       */
+      private function arrayBuilder(array $array): array {
+        $songs = array();
+        for($i = 0; $i < count($array); $i++) {
+
+          $songs[$i]['id'] = $array[$i]->getId();
+          $songs[$i]['songName'] = $array[$i]->getSongName();
+          $songs[$i]['singerName'] = $array[$i]->getSingerName();
+          $songs[$i]['genere'] = $array[$i]->getGenere();
+          $songs[$i]['thumbnail'] = $array[$i]->getThumbnail();
+          $user = $array[$i]->getAuthor();
+          $songs[$i]['uName'] = $user->getUserName();
+          $songs[$i]['profilePic'] = $user->getProfilePic();
+
+        }
+        return $songs;
+      }
+
+      /**
+       * Route for fetching the songs
+       */
+      #[Route('/fetchSongs', name: 'fetchSongs')]
+      public function fetchSongs(Request $request): Response {
+        if ($request->isXmlHttpRequest()) {
+          $offset = $request->request->get('offset');
+          $obj = new SongHandler($request);
+          $array = $obj->getSongs($offset, $this->em);
+          $songs = $this->arrayBuilder($array);
+          try {
+            return $this->render('Components/songs.html.twig',
+            ['songs' => $songs]);
+          }
+          catch(Exception $e) {
+            return $this->json([
+              'message' => $e->getMessage()
+            ]);
+          }
+          
+        }
+        return $this->render('error.html.twig');
+      }
+
+      /**
+       * Route for fetching the Recent Song
+       */
+      #[Route('/fetchRecentSong', name: 'fetchRecentSong')]
+      public function fetchRecentSong(Request $request) {
+        if ($request->isXmlHttpRequest()) {
+          $uId = $_SESSION['user'];
+          $uId = 2;
+          $obj = new SongHandler($request);
+          $song = $obj->getRecentSong($uId, $this->em);
+          $songs = $this->arrayBuilder($song);
+          try {
+            return $this->render('Components/songs.html.twig',
+            ['songs' => $songs]);
+          }
+          catch(Exception $e) {
+            return $this->json([
+              'message' => $e->getMessage()
+            ]);
+          }
+        }
+        else {
+        return $this->render('error.html.twig');
+        }
+      }
 }

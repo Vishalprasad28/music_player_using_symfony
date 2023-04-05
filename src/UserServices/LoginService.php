@@ -25,7 +25,6 @@ class LoginService {
   public function __construct(Request $request) {
     $this->email = $this->trimData($request->request->get('email'));
     $this->pwd = stripslashes(trim($request->request->get('pwd')));
-
   }
 
   /**
@@ -38,7 +37,7 @@ class LoginService {
     $emailCheck = $repository->findOneBy(['email' => $this->email]);
     if (!empty($emailCheck)) {
       if (password_verify($this->pwd, $emailCheck->getPassword())) {
-        $_SESSION['user']= serialize($emailCheck);
+        $_SESSION['user']= $emailCheck->getId();
         return 'Thank You';
       }
       else {

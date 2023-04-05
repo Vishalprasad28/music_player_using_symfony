@@ -32,6 +32,16 @@ class SongUploader
   private $imageFile;
 
   /**
+   * @var string
+   */
+  private string $randomSongName;
+
+  /**
+   * @var string
+   */
+  private string $randomPicName;
+
+  /**
    * @var object
    */
   private $song;
@@ -42,9 +52,9 @@ class SongUploader
   private string $genere;
 
   /**
-   * @var User
+   * @var int
    */
-  private User $user;
+  private int $uId;
 
   /**
    * Including the required traits
@@ -54,16 +64,17 @@ class SongUploader
    * Constructor for initialization
    * @param Request $request
    *
-   * @param User $user
+   * @param int $uId
    */
-  public function __construct(Request $request, User $user)
+  public function __construct(Request $request, int $uId)
   {
+    $this->randomPicName = '';
     $this->songName = $this->trimData($request->get('name'));
     $this->singer = $this->trimdata($request->get('singer'));
     $this->genere = "";
     $this->song = $request->files->get('song');
     $this->imageFile = $request->files->get('profile');
-    $this->user = $user;
+    $this->uId = $uId;
     $pop = $request->request->get('pop');
     $hiphop = $request->request->get('hiphop');
     $romantic = $request->request->get('romantic');
@@ -111,15 +122,21 @@ class SongUploader
    * 
    * @param EntityManagerInterface $em
    * 
-   * @return bool
+   * @return string
    */
   public function uploadSong(EntityManagerInterface $em) {
     $song = new Posts();
     $repository = $em->getRepository(User::class);
+    $user = $repository->findOneBy(['id' => $this->uId]);
     try {
-      $songPath = 'songs/' . $this->song['name'];
-      $cover = 'cover/' . ($this->imageFile['name'] != '') ? $this->imageFile['name'] : 'defaultmusic.png';
-      $song->setAuthor($this->user);
+      $songPath = 'songs/' . $this->randomSongName;
+      if ($this->randomPicName != '') {
+        $cover = 'cover/' . $this->randomPicName;
+      }
+      else {
+        $cover = 'cover/defaultmusic.jpg';
+      }
+      $song->setAuthor($user);
       $song->setSongName($this->songName);
       $song->setSingerName($this->singer);
       $song->setGenere($this->genere);

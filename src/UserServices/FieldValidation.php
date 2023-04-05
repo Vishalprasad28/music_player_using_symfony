@@ -176,26 +176,16 @@ trait FieldValidation {
    * @return bool
    */
   public function thumbnailFormate() {
-    if(isset($this->imageFile['name']) && $this->imageFile['name'] != '') {
-      $target_dir = '../public/thumbnail/';
-      $file_type = $this->imageFile["type"];
-      $file_name= $this->imageFile["name"];
-      $file_size = $this->imageFile["size"];
-      if ($file_type != "image/jpg" && $file_type != "image/png" && $file_type != "image/jpeg" && $file_type != "image/gif") {
-        return FALSE ;
-      }
-      elseif ($file_size > 10000000) {
+    if(!is_null($this->imageFile)){
+      // generate a random name for the file but keep the extension
+      $extension = $this->imageFile->getClientOriginalExtension();
+      if ($extension != 'jpg' && $extension != 'jpeg' && $extension != 'png' && $extension != 'gif') {
         return FALSE;
       }
-      elseif (!file_exists($target_dir . $file_name)) {
-        if (move_uploaded_file($this->imageFile["tmp_name"], $target_dir . $file_name)) {
-          return TRUE;
-        }
-        else {
-          return FALSE;
-        }
-      }
       else {
+        $this->randomPicName = uniqid().".".$this->imageFile->getClientOriginalExtension();
+        $path = "../public/cover/";
+        $this->imageFile->move($path, $this->randomPicName); // move the file to a path
         return TRUE;
       }
     }
@@ -210,26 +200,16 @@ trait FieldValidation {
    * @return bool
    */
   public function picFormate() {
-    if(isset($this->imageFile) && $this->imageFile['name'] != '') {
-      $target_dir = '../public/profile-pictures/';
-      $file_type = $this->imageFile["type"];
-      $file_name= $this->imageFile["name"];
-      $file_size = $this->imageFile["size"];
-      if ($file_type != "image/jpg" && $file_type != "image/png" && $file_type != "image/jpeg") {
+    if(!is_null($this->imageFile)){
+      // generate a random name for the file but keep the extension
+      $extension = $this->imageFile->getClientOriginalExtension();
+      if ($extension != 'jpg' && $extension != 'jpeg' && $extension != 'png') {
         return FALSE;
-      }
-      elseif ($file_size > 100000000) {
-        return FALSE;
-      }
-      elseif (!file_exists($target_dir . $file_name)) {
-        if (move_uploaded_file($this->imageFile["tmp_name"], $target_dir . $file_name)) {
-          return TRUE;
-        }
-        else {
-          return FALSE;
-        }
       }
       else {
+        $this->randomPicName = uniqid().".".$this->imageFile->getClientOriginalExtension();
+        $path = "../public/profilePic/";
+        $this->imageFile->move($path, $this->randomPicName); // move the file to a path
         return TRUE;
       }
     }
@@ -251,9 +231,9 @@ trait FieldValidation {
         return FALSE;
       }
       else {
-        $filename = uniqid().".".$this->song->getClientOriginalExtension();
-        $path = "../../public/songs/";
-        $this->song->move($path,$filename); // move the file to a path
+        $this->randomSongName = uniqid().".".$this->song->getClientOriginalExtension();
+        $path = "../public/songs/";
+        $this->song->move($path, $this->randomSongName); // move the file to a path
         return TRUE;
       }
     }
