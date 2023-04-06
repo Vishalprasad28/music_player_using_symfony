@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Controller;
+
+use App\Entity\LikesCount;
 use App\UserServices\ResetPwdService;
 session_start();
 use App\Entity\User;
@@ -13,6 +15,7 @@ use App\UserServices\SongHandler;
 use App\UserServices\SongUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use PhpParser\Node\Stmt\Catch_;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -121,7 +124,6 @@ class MusicController extends AbstractController
           ]);
         }
         else {
-          header('Refresh:0,url=/');
           return $this->render('home.html.twig');
         }
       }
@@ -227,12 +229,32 @@ class MusicController extends AbstractController
           $songs[$i]['singerName'] = $array[$i]->getSingerName();
           $songs[$i]['genere'] = $array[$i]->getGenere();
           $songs[$i]['thumbnail'] = $array[$i]->getThumbnail();
+          $songs[$i]['likes'] = count($array[$i]->getLikesCounts());
           $user = $array[$i]->getAuthor();
           $songs[$i]['uName'] = $user->getUserName();
           $songs[$i]['profilePic'] = $user->getProfilePic();
 
         }
         return $songs;
+      }
+
+      /**
+       * Function to convert an object into associativer array
+       * 
+       * @param object $object
+       * 
+       * @return array
+       */
+      private function objectToArray($object) {
+        $song = array();
+        $song['id'] = $object->getId();
+        $song['songName'] = $object->getSongName();
+        $song['singerName'] = $object->getSingerName();
+        $song['genere'] = $object->getGenere();
+        $song['thumbnail'] = $object->getThumbnail();
+        $song['path'] = $object->getPath();
+
+        return $song;
       }
 
       /**
@@ -266,7 +288,6 @@ class MusicController extends AbstractController
       public function fetchRecentSong(Request $request) {
         if ($request->isXmlHttpRequest()) {
           $uId = $_SESSION['user'];
-          $uId = 2;
           $obj = new SongHandler($request);
           $song = $obj->getRecentSong($uId, $this->em);
           $songs = $this->arrayBuilder($song);
@@ -280,8 +301,121 @@ class MusicController extends AbstractController
             ]);
           }
         }
-        else {
         return $this->render('error.html.twig');
+      }
+
+      /**
+       * ROute for getting a song by its id
+       */
+      #[Route('/fetchSongById', name: 'fetchSongById')]
+      public function fetchSongById(Request $request) {
+        if ($request->isXmlHttpRequest()) {
+          $songId = (int)$request->request->get('songId');
+          try {
+            $uId = $_SESSION['user'];
+            $obj = new SongHandler($request);
+            $song = $obj->getSongById($songId, $this->em);
+            $userHasLiked = $obj->hasLiked($uId, $song->getId(), $this->em);
+            $_SESSION['hasLiked'] = $userHasLiked;
+            $_SESSION['song'] = serialize($song);
+            $message = 'success';
+            return $this->json([
+              'message' => $message
+            ]);
+          }
+          catch(Exception $e) {
+            $message = 'Failed';
+            return $this->json([
+              'message' => $message
+            ]);
+          }
+          
         }
+        return $this->render('error.html.twig');
+
+      }
+
+      /**
+       * Music Player Page
+       */
+      #[Route('/player', name: 'player')]
+      public function player() {
+        if (isset($_SESSION['login']) && isset($_SESSION['song'])) {
+          $song = unserialize($_SESSION['song']);
+          $songArray = $this->objectToArray($song);
+          return $this->render('player.html.twig', [
+            'song' => $songArray,
+            'hasLiked' => $_SESSION['hasLiked']
+          ]);
+        }
+        else {
+          return $this->render('mainpage.html.twig');
+        }
+      }
+
+      /**
+       * Route for handling the likes
+       */
+      #[Route('/likesHandler', name: 'likesHandler')]
+      public function likesHandler(Request $request) {
+        if ($request->isXmlHttpRequest()) {
+          $temp = $request->request->get('like');
+          $songId = (int)$request->request->get('songId');
+          $uId = $_SESSION['user'];
+          $obj = new SongHandler($request);
+          $message = $obj->userLikesHandler($uId, $songId, $temp, $this->em);
+          if ($message == 'success') {
+            if ($temp == 0) {
+              $_SESSION['hasLiked'] = FALSE;
+            }
+            elseif ($temp == 1) {
+              $_SESSION['hasLiked'] = TRUE;
+            }
+          }
+        }
+        return $this->render('error.html.twig');
+      }
+
+      /**
+       * Router for the favourites page
+       */
+      #[Route('/favourites', name: 'favourites')]
+      public function favorites() {
+        if (isset($_SESSION['login'])) {
+          $repository = $this->em->getRepository(User::class);
+          $user = $repository->findOneBy(['id' => $_SESSION['user']]);
+          return $this->render('favourites.html.twig',[
+            'id' => $user->getId(),
+            'fullName' => $user->getfullName(),
+            'userName' => $user->getUserName(),
+            'email' => $user->getEmail(),
+            'picPath' => $user->getprofilePic()
+          ]);
+      }
+      else {
+        return $this->render('home.html.twig');
+      }
+    }
+      /**
+       * @Route to fetch all the songs lked by the user
+       */
+      #[Route('/favouritesFetcher', name: 'favouritesFetcher')]
+      public function favouritescher(Request $request) {
+        if ($request->isXmlHttpRequest()) {
+          $offset = $request->request->get('offset');
+          $obj = new SongHandler($request);
+          $songs = $obj->getFavourites($_SESSION['user'], $offset, $this->em);
+          $array = $this->arrayBuilder($songs);
+          try {
+            return $this->render('Components/songs.html.twig',
+            ['songs' => $songs]);
+          }
+          catch(Exception $e) {
+            return $this->json([
+              'message' => $e->getMessage()
+            ]);
+          }
+        }
+        return $this->render('error.html.twig');
       }
 }

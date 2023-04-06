@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/mainpage.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=Quicksand:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>Document</title>
+  </head>
+  <body>
+    {% include "Components/navigationBar.html.twig" %}
+    <div class="container favSongList">
+    {% include "Components/slidermenu.html.twig" %}
+      <h1 class="title">
+        This is Your Favourites List
+      </h1>
+      <section class="favPosts">
+      </section>
+      <button class="load-more-button">Load More</button>
+    </div>
+  </body>
+  <script src="js/favourites.js"></script>
+  
+</html>

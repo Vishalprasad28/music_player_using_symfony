@@ -36,13 +36,14 @@ class User
     #[ORM\Column(length: 300)]
     private ?string $profilePic = 'profilePic/default.png';
 
-    #[ORM\OneToMany(mappedBy: 'likedBy', targetEntity: Like::class, orphanRemoval: true)]
-    private Collection $likes;
+    #[ORM\OneToMany(mappedBy: 'likedBy', targetEntity: LikesCount::class, orphanRemoval: true)]
+    private Collection $likesCounts;
 
     public function __construct()
     {
-        $this->likes = new ArrayCollection();
+        $this->likesCounts = new ArrayCollection();
     }
+
 
     public function getId(): ?int
     {
@@ -134,29 +135,29 @@ class User
     }
 
     /**
-     * @return Collection<int, Like>
+     * @return Collection<int, LikesCount>
      */
-    public function getLikes(): Collection
+    public function getLikesCounts(): Collection
     {
-        return $this->likes;
+        return $this->likesCounts;
     }
 
-    public function addLike(Like $like): self
+    public function addLikesCount(LikesCount $likesCount): self
     {
-        if (!$this->likes->contains($like)) {
-            $this->likes->add($like);
-            $like->setLikedBy($this);
+        if (!$this->likesCounts->contains($likesCount)) {
+            $this->likesCounts->add($likesCount);
+            $likesCount->setLikedBy($this);
         }
 
         return $this;
     }
 
-    public function removeLike(Like $like): self
+    public function removeLikesCount(LikesCount $likesCount): self
     {
-        if ($this->likes->removeElement($like)) {
+        if ($this->likesCounts->removeElement($likesCount)) {
             // set the owning side to null (unless already changed)
-            if ($like->getLikedBy() === $this) {
-                $like->setLikedBy(null);
+            if ($likesCount->getLikedBy() === $this) {
+                $likesCount->setLikedBy(null);
             }
         }
 

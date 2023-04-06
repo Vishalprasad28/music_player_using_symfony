@@ -2,36 +2,54 @@ $(document).ready(function(){
   var offset = 0;
   getAllSongs(offset);
 
+  //Play the song on apage after cklicking on a post
+  $('.posts,.favPosts').on('click','.song-container',function(){
+    var song_id = $(this).attr('song-id');
+    $.post("/fetchSongById",
+    {
+      songId: song_id
+    },
+    function(data,status) {
+      if (status == 'success')  {
+        if (data.message == 'success') {
+          window.location.href = '/player';
+        }
+      }
+    });
+  });
+  
+  //menu bar functionality
   $('.menu-container').click(function(){
     $('.menu').toggleClass('form-hider');
   });
 
+  //Opening the song upload form on clicking on it
   $('.add-song').click(function(){
     $('.song-upload-form').toggleClass('form-hider');
     $('.cross').toggleClass('cancel-btn');
   });
 
+  //song upload formn functionalilty
   $('.song-upload-form').submit(function(e){
     e.preventDefault();
-    
     songUpload(this);
   });
 
+    //load ,more button functionality
+    $('.load-more-button').click(function(){
+      getAllSongs(offset);
+    })
+
   //All Functions here
+
+  //Function to show the message box
   function showMessage(btn, message) {
     $('#submit').attr('disabled',false);
     $('#submit').html(btn);
     $(".error-box").html(message);
   }
 
-  function convertToArray(e) {
-    var array = {};
-    e.forEach(element => {
-      array[element['name']] = element['value'];
-    });
-    return array;
-  }
-
+  //fetching the songs
   function getAllSongs(e) {
     $.post('/fetchSongs',{ offset: e },function(data,status){
       if (status == 'success') {
@@ -41,6 +59,7 @@ $(document).ready(function(){
     });
   }
 
+  //getting the recently uploaded song
   function getRecentSong() {
     $.post('/fetchRecentSong',function(data,status){
       if (status == 'success') {
@@ -50,6 +69,7 @@ $(document).ready(function(){
     });
   }
 
+  //song upload functionallity
   function songUpload(form) {
     var e = new FormData(form);
     $(".error-box").html("");
@@ -73,8 +93,4 @@ $(document).ready(function(){
       processData: false
   });
   }
-
-  $('.load-more-button').click(function(){
-    getAllSongs(offset);
-  })
 })

@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\Like;
+use App\Entity\LikesCount;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Like>
+ * @extends ServiceEntityRepository<LikesCount>
  *
- * @method Like|null find($id, $lockMode = null, $lockVersion = null)
- * @method Like|null findOneBy(array $criteria, array $orderBy = null)
- * @method Like[]    findAll()
- * @method Like[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method LikesCount|null find($id, $lockMode = null, $lockVersion = null)
+ * @method LikesCount|null findOneBy(array $criteria, array $orderBy = null)
+ * @method LikesCount[]    findAll()
+ * @method LikesCount[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class LikeRepository extends ServiceEntityRepository
+class LikesCountRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Like::class);
+        parent::__construct($registry, LikesCount::class);
     }
 
-    public function save(Like $entity, bool $flush = false): void
+    public function save(LikesCount $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class LikeRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Like $entity, bool $flush = false): void
+    public function remove(LikesCount $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class LikeRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return Like[] Returns an array of Like objects
+//     * @return LikesCount[] Returns an array of LikesCount objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class LikeRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Like
+//    public function findOneBySomeField($value): ?LikesCount
 //    {
 //        return $this->createQueryBuilder('l')
 //            ->andWhere('l.exampleField = :val')

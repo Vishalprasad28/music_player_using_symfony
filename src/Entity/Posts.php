@@ -34,12 +34,12 @@ class Posts
     #[ORM\JoinColumn(nullable: false)]
     private ?User $author = null;
 
-    #[ORM\OneToMany(mappedBy: 'postId', targetEntity: Like::class, orphanRemoval: true)]
-    private Collection $likes;
+    #[ORM\OneToMany(mappedBy: 'song', targetEntity: LikesCount::class, orphanRemoval: true)]
+    private Collection $likesCounts;
 
     public function __construct()
     {
-        $this->likes = new ArrayCollection();
+        $this->likesCounts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -121,29 +121,29 @@ class Posts
     }
 
     /**
-     * @return Collection<int, Like>
+     * @return Collection<int, LikesCount>
      */
-    public function getLikes(): Collection
+    public function getLikesCounts(): Collection
     {
-        return $this->likes;
+        return $this->likesCounts;
     }
 
-    public function addLike(Like $like): self
+    public function addLikesCount(LikesCount $likesCount): self
     {
-        if (!$this->likes->contains($like)) {
-            $this->likes->add($like);
-            $like->setPostId($this);
+        if (!$this->likesCounts->contains($likesCount)) {
+            $this->likesCounts->add($likesCount);
+            $likesCount->setSong($this);
         }
 
         return $this;
     }
 
-    public function removeLike(Like $like): self
+    public function removeLikesCount(LikesCount $likesCount): self
     {
-        if ($this->likes->removeElement($like)) {
+        if ($this->likesCounts->removeElement($likesCount)) {
             // set the owning side to null (unless already changed)
-            if ($like->getPostId() === $this) {
-                $like->setPostId(null);
+            if ($likesCount->getSong() === $this) {
+                $likesCount->setSong(null);
             }
         }
 

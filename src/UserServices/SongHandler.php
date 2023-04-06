@@ -2,15 +2,14 @@
 
 namespace App\UserServices;
 
+use App\Entity\LikesCount;
 use App\Entity\Posts;
 use App\Entity\User;
+use App\Repository\LikeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
 
-
-
-require_once('../vendor/autoload.php');
 
 
 class SongHandler {
@@ -45,6 +44,7 @@ class SongHandler {
    * Fetching the recent song posted by the user
    * 
    * @param int $uId
+   * @param EntityManagerInterface $em
    * 
    * @return array
    */
@@ -56,6 +56,118 @@ class SongHandler {
     return $songs;
   }
 
-  
+  /**
+   * Fetching a song from  its id
+   * 
+   * @param int $uId
+   * @param EntityManagerInterface $em
+   * 
+   * @return object
+   */
+  public function getSongById(int $songId, EntityManagerInterface $em): object {
+    $repository = $em->getRepository(Posts::class);
+    $song = $repository->findOneBy(['id' => $songId]);
+    return $song;
+  }
 
+  /**
+   * User Likes Handler
+   * 
+   * @param int $uId
+   * @param int $songId
+   * @param int $temp
+   * @param EntityManagerInterface $em
+   * 
+   * @return string
+   */
+  public function userLikesHandler(int $uId, int $songId, int $temp, EntityManagerInterface $em): string {
+    $postRepo = $em->getRepository(Posts::class);
+    $userRepo = $em->getRepository(User::class);
+    $user = $userRepo->findOneBy(['id' => $uId]);
+    $song = $postRepo->findOneBy(['id' => $songId]);
+    $likesRepo = $em->getRepository(LikesCount::class);
+    $userHasLiked = $likesRepo->findOneBy(['song' => $song, 'likedBy' => $user]);
+    if ($temp == 1) {
+      if (empty($userHasLiked)) {
+        try {
+          $like = new LikesCount();
+          $like->setSong($song);
+          $like->setLikedBy($user);
+          $em->persist($like);
+          $em->flush();
+          return 'success';
+        }
+        catch(Exception $e) {
+          return $e;
+        }
+      }
+      else {
+        return 'success';
+      }
+    }
+    elseif ($temp == 0) {
+      if (!empty($userHasLiked)) {
+        try {
+          $em->remove($userHasLiked);
+          $em->flush();
+          return 'success';
+        }
+        catch(Exception $e) {
+          return $e;
+        }
+      }
+      else {
+        return 'success';
+      }
+    }
+    else {
+      return 'Failed';
+    }
+  }
+
+  /**
+   * Function to check idf the user has liked a perticular post
+   * @param int $uId
+   * @param int $songId
+   * @param EntityManagerInterface $em
+   * 
+   * @return bool
+   */
+  public function hasLiked(int $uId, int $songId, EntityManagerInterface $em) {
+    $postRepo = $em->getRepository(Posts::class);
+    $userRepo = $em->getRepository(User::class);
+    $user = $userRepo->findOneBy(['id' => $uId]);
+    $song = $postRepo->findOneBy(['id' => $songId]);
+    $likesRepo = $em->getRepository(LikesCount::class);
+    $userHasLiked = $likesRepo->findOneBy(['song' => $song, 'likedBy' => $user]);
+    if (!empty($userHasLiked)) {
+      return TRUE;
+    }
+    else {
+      return FAlSE;
+    }
+  }
+
+  /**
+   * Function to get all songs the user has liked
+   * 
+   * @param int $uId
+   * @param int $offset
+   * @param EntityManagerInterface $em
+   * 
+   * @return array
+   */
+  public function getFavourites(int $uId, int $offset, EntityManagerInterface $em): array {
+    $userRepo = $em->getRepository(User::class);
+    $songRepo = $em->getRepository(Posts::class);
+    $user = $userRepo->findOneBy(['id' => $_SESSION['user']]);
+    $likesRepo = $em->getRepository(LikesCount::class);
+    $likes = $likesRepo->findBy(['likedBy' => $_SESSION['user']], [], 9, $offset);
+    $songs = array();
+    foreach($likes as $like) {
+      $song = $songRepo->findOneBy(['id' => $like->getSong()]);
+      array_push($songs, $song);
+    }
+    return $songs;
+  }
 }

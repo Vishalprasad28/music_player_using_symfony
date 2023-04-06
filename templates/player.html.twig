@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="style/songplayer.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+		<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+		<title>Document</title>
+	</head>
+	<body style='background-image: url("{{song.thumbnail}}")'>
+		<a href="{{song.path}}" target="_blank" class="download-icon">
+			<i class="fa-solid fa-download"></i>
+		</a>
+		<div class="container flexing">
+			<div class="song-container" song-id="{{song.id}}">
+				<div class="thumbnail flexing">
+					<div id="wave" class="flexing wave-hider"><img src="public/audio/waves.gif" alt=""></div>
+					<img class="rotation-animation" id="main-image" src="{{song.thumbnail}}" loading="lazy" alt="">
+				</div>
+				<h1 id="title">{{song.songName}}</h1>
+				<p id="singer">
+					{{song.singerName}}
+        </p>
+				<p id="genere">
+          {{song.genere}}
+				</p>
+
+				<audio class="song" pause>
+					<source src="{{song.path}}" type="audio/mpeg">
+				</audio>
+				<br>
+				<div class="control-n-range">
+					<p class="timestamp">00:00</p>
+					<input type="range" class="progress">
+					<div class="controls flexing">
+						<div class="like-icon {{hasLiked ? 'liked' : ''}}">
+							<i class="fa-solid fa-heart"></i>
+						</div>
+						<div class="backward flexing">
+							<i class="fa-solid fa-backward"></i>
+						</div>
+						<div class="play flexing">
+							<i class="fa-solid fa-pause play-icon"></i>
+						</div>
+						<div class="forward flexing">
+							<i class="fa-solid fa-forward"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="js/songplayer.js"></script>
+</html>

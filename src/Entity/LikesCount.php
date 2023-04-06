@@ -2,23 +2,22 @@
 
 namespace App\Entity;
 
-use App\Repository\LikeRepository;
+use App\Repository\LikesCountRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: LikeRepository::class)]
-#[ORM\Table(name: '`like`')]
-class Like
+#[ORM\Entity(repositoryClass: LikesCountRepository::class)]
+class LikesCount
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'likes')]
+    #[ORM\ManyToOne(inversedBy: 'likesCounts')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Posts $postId = null;
+    private ?Posts $song = null;
 
-    #[ORM\ManyToOne(inversedBy: 'likes')]
+    #[ORM\ManyToOne(inversedBy: 'likesCounts')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $likedBy = null;
 
@@ -27,14 +26,14 @@ class Like
         return $this->id;
     }
 
-    public function getPostId(): ?Posts
+    public function getSong(): ?Posts
     {
-        return $this->postId;
+        return $this->song;
     }
 
-    public function setPostId(?Posts $postId): self
+    public function setSong(?Posts $song): self
     {
-        $this->postId = $postId;
+        $this->song = $song;
 
         return $this;
     }
