@@ -3,7 +3,7 @@ $(document).ready(function(){
   getAllSongs(offset);
 
   //Play the song on apage after cklicking on a post
-  $('.posts,.favPosts').on('click','.song-container',function(){
+  $('.posts').on('click','.song-container',function(){
     var song_id = $(this).attr('song-id');
     $.post("/fetchSongById",
     {
@@ -53,6 +53,11 @@ $(document).ready(function(){
   function getAllSongs(e) {
     $.post('/fetchSongs',{ offset: e },function(data,status){
       if (status == 'success') {
+        if (data == '' && offset == 0) {
+          $('.posts').html('<center><h2>No Song Uploaded Yet :(</h2></center>');
+          $('.posts').css('height','auto');
+          $('.load-more-button').css('display','none');
+        }
         $('.posts').append(data);
         offset = $('.posts').children().length;
       }

@@ -230,7 +230,7 @@ button {
   width:100px;
   height:100px;
   opacity: 10%;
-  background-image: url(/public/assets/lightbluelogo.png);
+  background-image: url(../assets/lightbluelogo.png);
   background-size: 700px 700px;
   width: 100%;
   height: 100%;

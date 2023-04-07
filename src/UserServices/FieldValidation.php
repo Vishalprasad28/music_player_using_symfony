@@ -101,6 +101,7 @@ trait FieldValidation {
 
   /**
    * Function for trimming the data.
+   * @param string $data
    * 
    * @return string
    */

@@ -1,15 +1,12 @@
 <?php
 
 namespace App\Controller;
-
-use App\Entity\LikesCount;
-use App\UserServices\ResetPwdService;
+use App\UserServices\UpdateProfile;
 session_start();
+use App\UserServices\ResetPwdService;
 use App\Entity\User;
-use App\Entity\Posts;
 use App\UserServices\ForgotPwdService;
 use App\UserServices\LoginService;
-use PhpParser\Node\Scalar\MagicConst\Method;
 use App\UserServices\SignUpService;
 use App\UserServices\SongHandler;
 use App\UserServices\SongUploader;
@@ -17,7 +14,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use PhpParser\Node\Stmt\Catch_;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -400,7 +396,7 @@ class MusicController extends AbstractController
        * @Route to fetch all the songs lked by the user
        */
       #[Route('/favouritesFetcher', name: 'favouritesFetcher')]
-      public function favouritescher(Request $request) {
+      public function favouritesFetcher(Request $request) {
         if ($request->isXmlHttpRequest()) {
           $offset = $request->request->get('offset');
           $obj = new SongHandler($request);
@@ -408,7 +404,7 @@ class MusicController extends AbstractController
           $array = $this->arrayBuilder($songs);
           try {
             return $this->render('Components/songs.html.twig',
-            ['songs' => $songs]);
+            ['songs' => $array]);
           }
           catch(Exception $e) {
             return $this->json([
@@ -417,5 +413,100 @@ class MusicController extends AbstractController
           }
         }
         return $this->render('error.html.twig');
+      }
+
+      /**
+       * Route for profile view page
+       */
+      #[Route('/profile', name: 'profile')]
+      public function profile() {
+        if (isset($_SESSION['login'])) {
+          $repository = $this->em->getRepository(User::class);
+          $user = $repository->findOneBy(['id' => $_SESSION['user']]);
+          return $this->render('profile.html.twig',[
+            'id' => $user->getId(),
+            'fullName' => $user->getfullName(),
+            'userName' => $user->getUserName(),
+            'email' => $user->getEmail(),
+            'picPath' => $user->getprofilePic(),
+            'phone' => $user->getPhone(),
+            'interests'=> $user->getInterests()
+          ]);
+        }
+        else {
+          return $this->render('home.html.twig');
+        }
+      }
+
+      /**
+       * Route for update profile page
+       */
+      #[Route('/update', name: 'update')]
+      public function update() {
+        if (isset($_SESSION['login'])) {
+          $repository = $this->em->getRepository(User::class);
+          $user = $repository->findOneBy(['id' => $_SESSION['user']]);
+          $interests = $user->getInterests();
+          $pop = '';
+          $hiphop = '';
+          $dancing = '';
+          $romantic = '';
+          $array = explode(',', $interests);
+
+          if (in_array('pop', $array, TRUE)) {
+            $pop = 'pop';
+          }
+          if (in_array('hiphop', $array, TRUE)) {
+            $hiphop = 'hiphop';
+          }
+          if (in_array('dancing', $array, TRUE)) {
+            $dancing = 'dancing';
+          }
+          if (in_array('romantic', $array, TRUE)) {
+            $romantic = 'romantic';
+          }
+          return $this->render('update.html.twig',[
+            'email' => $user->getEmail(),
+            'picPath' => $user->getprofilePic(),
+            'phone' => $user->getPhone(),
+            'pop' => $pop,
+            'hiphop' => $hiphop,
+            'dancing' => $dancing,
+            'romantic' => $romantic
+          ]);
+        }
+        else {
+          return $this->render('home.html.twig');
+        }
+      }
+
+      /**
+       * Route For the Update profile Validation
+       */
+      #[Route('/updateProfileValidation', name: 'updateProfileValidation')]
+      public function updateProfileValidation(Request $request): Response {
+        if ($request->isXmlHttpRequest()) {
+          $obj = new UpdateProfile($request, $_SESSION['user']);
+          $message = $obj->fieldValidation();
+          if ($message == 'success') {
+            $message = $obj->checkUser($this->em);
+          }
+          return $this->json([
+            'message' => $message
+          ]);
+        }
+        return $this->render('home.html.twig');
+      }
+
+      /**
+       * Route for Logging Out
+       */
+      #[Route('/logout', name: 'logout')]
+      public function logOut() {
+        if (isset($_SESSION['login'])) {
+          unset($_SESSION);
+          session_destroy();
+          return $this->render('home.html.twig');
+        }
       }
 }
