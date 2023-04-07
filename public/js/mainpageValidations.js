@@ -42,6 +42,16 @@ $(document).ready(function(){
 
   //All Functions here
 
+  //Function to intriduce the Load More Functionality
+  function introduceLoadMoreBtn() {
+    if (offset < 8) {
+      $('.load-more-button').css('display','none');
+    }
+    else {
+      $('.load-more-button').css('display','block');
+    }
+  }
+
   //Function to show the message box
   function showMessage(btn, message) {
     $('#submit').attr('disabled',false);
@@ -54,13 +64,18 @@ $(document).ready(function(){
     $.post('/fetchSongs',{ offset: e },function(data,status){
       if (status == 'success') {
         if (data == '' && offset == 0) {
-          $('.posts').html('<center><h2>No Song Uploaded Yet :(</h2></center>');
-          $('.posts').css('height','auto');
-          $('.load-more-button').css('display','none');
+          $('.posts').html('');
         }
-        $('.posts').append(data);
+        else if (offset == 0) {
+          $('.posts').html(data);
+        }
+        else {
+          $('.posts').append(data);
+        }
         offset = $('.posts').children().length;
+        introduceLoadMoreBtn();
       }
+
     });
   }
 
@@ -68,7 +83,14 @@ $(document).ready(function(){
   function getRecentSong() {
     $.post('/fetchRecentSong',function(data,status){
       if (status == 'success') {
-        $('.posts').prepend(data);
+        if (offset == 0) {
+          $('.posts').html(data);
+          introduceLoadMoreBtn();
+        }
+        else {
+          $('.posts').prepend(data);
+          introduceLoadMoreBtn();
+        }
         offset = $('.posts').children().length;
       }
     });

@@ -98,7 +98,7 @@ $(document).ready(function() {
     $(".error-box p").html("");
     $('#submit').html('<img src="assets/loader.gif" alt="">');
     let array = convertToArray(e);
-    $.post('/forgotPwdVerificaton',array,
+    $.post('/forgotPwdVerificaton', array, 
     function(data,status){
       if (status == 'success') {
         showMessage('Verify', data.message);
