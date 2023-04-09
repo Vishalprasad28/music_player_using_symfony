@@ -136,7 +136,7 @@ class UpdateProfile {
   private function updateCredentials(EntityManagerInterface $em) {
     $userRepo = $em->getRepository(User::class);
     try {
-      $picPath = 'profilePic/' . $this->randomPicName;
+      $picPath = 'profilePic/' . (!isset($this->randomPicName) ? 'default.png' : $this->randomPicName);
       $oldCredentials = $userRepo->findOneBy(['id' => $this->uId]);
       $oldCredentials->setEmail($this->email);
       $oldCredentials->setPhone($this->phone);
