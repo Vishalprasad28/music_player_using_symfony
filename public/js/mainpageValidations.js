@@ -1,5 +1,6 @@
 $(document).ready(function(){
   var offset = 0;
+  var trendingListOffset = 0;
   getAllSongs(offset);
 
   //Play the song on apage after cklicking on a post
@@ -38,7 +39,7 @@ $(document).ready(function(){
     //load ,more button functionality
     $('.load-more-button').click(function(){
       getAllSongs(offset);
-    })
+    });
 
   //All Functions here
 
@@ -59,7 +60,7 @@ $(document).ready(function(){
     $(".error-box").html(message);
   }
 
-  //fetching the songs
+  //Fetching the songs
   function getAllSongs(e) {
     $.post('/fetchSongs',{ offset: e },function(data,status){
       if (status == 'success') {

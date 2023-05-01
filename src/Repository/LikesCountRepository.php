@@ -39,6 +39,32 @@ class LikesCountRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * Function to fetch all the song ids that has like Count greater than
+     * a certain limit
+     * 
+     *   
+     *     Returns the array of Likecount objects
+     */
+    public function findByTrending(int $likeCount, int $offset) {
+        $queryBuilder = $this->createQueryBuilder('i');
+        $query = $queryBuilder
+        ->select('i.id')
+        ->having('COUNT(i.id) >= :limit')
+        ->groupBy('i.song')
+        ->setMaxResults(9)
+        ->setFirstResult($offset)
+        ->setParameter('limit', $likeCount)
+        ->getQuery();
+        return $query->getResult();
+            // ->where('COUNT(Likes.id) >= :limit')
+            // ->groupBy('Likes.song_id')
+            // ->setMaxResults(9)
+            // ->setFirstResult($offset)
+            // ->setParameter('limit', $likeCount)
+            // ->getQuery()
+            // ->getResult();
+    }
 //    /**
 //     * @return LikesCount[] Returns an array of LikesCount objects
 //     */

@@ -509,4 +509,48 @@ class MusicController extends AbstractController
           return $this->render('home.html.twig');
         }
       }
+
+      /**
+       * Route for the Trending List Page
+       */
+      #[Route('/trending', name: 'trending')]
+      public function trending() {
+        if (isset($_SESSION['login'])) {
+          $repository = $this->em->getRepository(User::class);
+          $user = $repository->findOneBy(['id' => $_SESSION['user']]);
+          return $this->render('trending.html.twig',
+        [
+            'id' => $user->getId(),
+            'fullName' => $user->getfullName(),
+            'userName' => $user->getUserName(),
+            'email' => $user->getEmail(),
+            'picPath' => $user->getprofilePic()
+        ]);
+        }
+        return $this->render('error.html.twig');
+      }
+
+      /**
+       * Route for Getting the Trending List
+       * 
+       *   @param Request $request
+       *     Accepts an XML HTTP Request Object
+       */
+      #[Route('/getTrending', name: 'getTrending')]
+      public function getTrending(Request $request) {
+        if ($request->isXmlHttpRequest()) {
+          $obj = new SongHandler($request);
+          $result = $obj->getTrendingSongs(1, $this->em);
+          $songs = $this->arrayBuilder($result);
+          try {
+            return $this->render('Components/songs.html.twig',
+            ['songs' => $songs]);
+          }
+          catch(Exception $e) {
+            return $this->json([
+              'message' => $e->getMessage()
+            ]);
+          }
+        }
+      }
 }

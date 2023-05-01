@@ -170,4 +170,31 @@ class SongHandler {
     }
     return $songs;
   }
+
+  /**
+   * Function to fetch all the trending songs
+   * Songs that has like count above a certain number
+   * 
+   *   @param int $likeCount
+   *     Accepts the like count for a trending song
+   * 
+   *   @param EntityManagerInterface $em
+   *     Accepts the Entity Manager to handle the entity classes
+   * 
+   *   @return array
+   *     Returns the array of the songs that are trending
+   */
+  public function getTrendingSongs(int $likeCount, EntityManagerInterface $em) {
+    $likesRepo = $em->getRepository(LikesCount::class);
+    $songRepo = $em->getRepository(Posts::class);
+    $offset = $this->request->get('offset');
+    
+    $songIds = $likesRepo->findByTrending($likeCount, $offset);
+    $songs = array();
+    foreach ($songIds as $songId) {
+      $song = $songRepo->findOneBy(['id' => $songId['id']]);
+      array_push($songs, $song);
+    }
+    return $songs;
+  }
 }

@@ -136,12 +136,14 @@ class UpdateProfile {
   private function updateCredentials(EntityManagerInterface $em) {
     $userRepo = $em->getRepository(User::class);
     try {
-      $picPath = 'profilePic/' . (!isset($this->randomPicName) ? 'default.png' : $this->randomPicName);
       $oldCredentials = $userRepo->findOneBy(['id' => $this->uId]);
+      if (isset($this->randomPicName)) {
+        $picPath = 'profilePic/' . $this->randomPicName;
+        $oldCredentials->setProfilePic($picPath);
+      }
       $oldCredentials->setEmail($this->email);
       $oldCredentials->setPhone($this->phone);
       $oldCredentials->setInterests($this->interest);
-      $oldCredentials->setProfilePic($picPath);
       $em->merge($oldCredentials);
       $em->flush();
       return TRUE;
@@ -149,7 +151,5 @@ class UpdateProfile {
     catch(Exception $e) {
       return FALSE;
     }
-    
-
   }
 }
