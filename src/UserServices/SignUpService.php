@@ -1,29 +1,51 @@
 <?php
+
 namespace App\UserServices;
 
+use App\Entity\User;
 use App\UserServices\SignUp;
+use Doctrine\ORM\EntityManagerInterface;
+use Exception;
+use Symfony\Component\HttpFoundation\Request;
 
-class SignUpService extends SignUp {
-  
-  use FieldValidation;
+class SignUpService extends SignUp
+{
+
+  use FieldValidation, Mailer;
+
   /**
-   * @param string $fName
-   * @param string $lName
-   * @param string $email
-   * @param string $username
-   * @param string $pwd
-   * @param string $confPwd 
+   * COnstructor that acepts the request variable
+   * 
+   * @param Request $request
    */
-  public function __construct(string $fName, string $lName, string $email, string $userName, string $pwd, string $confPwd, string $contact, string $interest) {
-    // $this->validInterests = array('pop','hiphop','romantic','dancing','');
-    $this->fName = $this->trimData($fName);
-    $this->lName = $this->trimData($lName);
-    $this->email = $this->trimData($email);
-    $this->userName = $this->trimData($userName);
-    $this->contact = $this->trimData($contact);
-    $this->interest = $this->trimData($interest);
-    $this->pwd = stripslashes(trim($pwd));
-    $this->confPwd = stripslashes(trim($confPwd));
+  public function __construct(Request $request)
+  {
+    $this->validInterests = array('pop', 'hiphop', 'romantic', 'dancing', '');
+    $this->fName = $this->trimData($request->request->get('fname'));
+    $this->lName = $this->trimData($request->request->get('lname'));
+    $this->email = $this->trimData($request->request->get('email'));
+    $this->phone = $this->trimdata($request->request->get('phone'));
+    $this->userName = $this->trimdata($request->request->get('uname'));
+    $this->pwd = stripslashes(trim($request->request->get('pwd')));
+    $this->confPwd = stripslashes(trim($request->request->get('confPwd')));
+    $pop = $request->request->get('pop');
+    $hiphop = $request->request->get('hiphop');
+    $romantic = $request->request->get('romantic');
+    $dancing = $request->request->get('dancing');
+    $this->interest = "";
+
+    if (isset($pop)) {
+      $this->interest = $this->interest . 'pop,';
+    }
+    if (isset($hiphop)) {
+      $this->interest = $this->interest . 'hiphop,';
+    }
+    if (isset($romantic)) {
+      $this->interest = $this->interest . 'romantic,';
+    }
+    if (isset($dancing)) {
+      $this->interest = $this->interest . 'dancing,';
+    }
   }
 
   /**
@@ -31,28 +53,79 @@ class SignUpService extends SignUp {
    * 
    * @return string
    */
-  public function signUp():string {
-    $path = 'public/profile-pictures/default.png';
+  public function fieldValidation(): string
+  {
+
     if (!$this->nameValidation($this->fName) || !$this->nameValidation($this->lName)) {
       return 'Invalid Name Field formate';
-    }
-    elseif (!$this->validateEmail()) {
+    } elseif (!$this->validateEmail()) {
       return 'Invalid Email Formate';
-    }
-    elseif (!$this->contactValidation()) {
+    } elseif (!$this->contactValidation()) {
       return 'Invalid Phone Number Formate';
-    }
-    elseif (!$this->validatePwd()) {
+    } elseif (!$this->validatePwd()) {
       return 'Invalid Password Formate';
-    }
-    elseif (!$this->confpwdmatcher()) {
+    } elseif (!$this->confpwdmatcher()) {
       return "Confirm Password Field Doesn't Match";
-    }
-    elseif (!$this->hasInterest()) {
+    } elseif (!$this->hasInterest()) {
       return 'Provide an Interest';
-    }
-    else {
+    } else {
       return 'success';
     }
+  }
+
+  /**
+   * Checking if the user exists in the  database
+   * 
+   * @param EntityManagerInterface $em
+   * 
+   * @return string
+   */
+  public function checkUser(EntityManagerInterface $em): string
+  {
+    $repository = $em->getRepository(User::class);
+    $emailCheck = $repository->findOneBy(['email' => $this->email]);
+    $phoneCheck = $repository->findOneBy(['phone' => $this->phone]);
+    $userNameCheck = $repository->findOneBy(['userName' => $this->userName]);
+    if (!empty($emailCheck)) {
+      $message = 'Email Already Exists';
+    } elseif (!empty($phoneCheck)) {
+      $message = 'Phone Number Already Exists';
+    } elseif (!empty($userNameCheck)) {
+      $message = 'User Name Already Exists';
+    } else {
+      $message = $this->register($em);
+    }
+    return $message;
+  }
+
+  /**
+   * Registring the user
+   * 
+   * @param EntityManagerInterface $em
+   */
+  private function register(EntityManagerInterface $em)
+  {
+    $repository = $em->getRepository(User::class);
+    $user = new User();
+    try {
+      $user->setUserName($this->userName);
+      $user->setFullName($this->fName . ' ' . $this->lName);
+      $user->setEmail($this->email);
+      $user->setPhone($this->phone);
+      $hashedPwd = password_hash($this->pwd, PASSWORD_DEFAULT);
+      $user->setPassword($hashedPwd);
+      $user->setInterests($this->interest);
+      $em->persist($user);
+      $em->flush();
+      $uId = $repository->findOneBy(['userName' => $this->userName]);
+      $_SESSION['user'] = $uId->getId();
+      $sub = 'Radiohead.co.in Greets';
+      $body = 'Thank You for joining us';
+      $this->sendMail($sub, $body);
+      $message = 'Thank You';
+    } catch (Exception $e) {
+      $message = 'Failed';
+    }
+    return $message;
   }
 }

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/mainpage.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=Quicksand:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>Document</title>
+  </head>
+  <body>
+  {% include "Components/navigationBar.html.twig" %}
+    <div class="container">
+  {% include "Components/slidermenu.html.twig" %}
+      <main class="flexing flex-justify-between">
+        <div class="sidebar">
+          <div class="user flexing flex-column">
+            <div class="nav-profile-pic">
+              <img src="{{picPath}}" alt="">
+            </div>
+            <h2 class="user-fullname">{{fullName}}</h2>
+           </div>
+          <div class="add-song">
+            Add Tracks <br>
+            <i class="fa-solid fa-plus cross"> </i>
+          </div>
+          <form action="controller/songuploadcontroller.php" class="flexing flex-column song-upload-form form-hider" method="POST" enctype="multipart/form-data">
+            <h1>Add Your tracks</h1>
+            <label for="song"><i class="fa-solid fa-plus"></i></label>
+            <input type="file" name="song" id="song" required>
+            <label for="profile">Select a Cover Image</label>
+            <input type="file" name="profile" id="profile">
+            <input type="text" name="name" id="name" required placeholder="Song name">
+            <input type="text" name="singer" id="singer"placeholder="Singer's name" required>
+            <div class="checklist flexing">
+              <input type="checkbox" class="genere" name="pop" value="pop"> POP
+              <input type="checkbox" class="genere" name="hiphop" value="hiphop">hiphop
+              <input type="checkbox" class="genere" name="romantic" value="romantic">romantic
+              <input type="checkbox" class="genere" name="dancing" value="Dancing"> Dancing
+            </div>
+            <button type="submit" name="submit" id="submit">Post</button>
+            <p class="error-box">&nbsp;</p>
+          </form>
+        </div>
+        <div class="songs">
+          <section class="posts">
+          </section>
+          <button class="load-more-button">Load More</button>
+        </div>
+      </main>
+    </div>
+  </body>
+  <script src="js/mainpageValidations.js"></script>
+</html>

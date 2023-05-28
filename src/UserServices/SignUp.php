@@ -44,7 +44,7 @@ abstract class SignUp {
   /**
    * @var string
    */
-  protected string $contact;
+  protected string $phone;
 
   /**
    * @var string
@@ -61,7 +61,7 @@ abstract class SignUp {
    * Function that sign ups the user
    * 
    */
-  abstract function signUp();
+  abstract function fieldValidation();
 
 }
 

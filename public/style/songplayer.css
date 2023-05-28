@@ -13,9 +13,7 @@ body{
   backdrop-filter: blur(10px);
 }
 .song-container {
-  /* position: relative; */
   padding: 1rem 2rem;
-  /* background-color: rgb(61, 61, 61); */
 }
 .flexing {
   display: flex;

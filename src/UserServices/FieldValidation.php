@@ -2,11 +2,11 @@
 
 namespace App\UserServices;
 
-use Dotenv\Dotenv;
 use GuzzleHttp\Client;
+use Symfony\Component\Dotenv\Dotenv;
 
-$dotenv = Dotenv::createImmutable(__DIR__);
-$dotenv->load();
+$dotenv = new Dotenv();
+$dotenv->load(__DIR__ . '/.env');
 /**
  * Trait for Input Field validation
  */
@@ -44,13 +44,13 @@ trait FieldValidation {
    * @return bool
    */
   private function contactValidation() {
-    if ($this->contact == '') {
+    if ($this->phone == '') {
       return FALSE;
     }
-    elseif(strlen($this->contact)>13){
+    elseif(strlen($this->phone)>13){
       return FALSE;
     }
-    elseif(!preg_match("/[+][9][1][6-9][0-9]{9}/",$this->contact)){
+    elseif(!preg_match("/[+][9][1][6-9][0-9]{9}/",$this->phone)){
       return FALSE;
     }
     else {
@@ -101,10 +101,11 @@ trait FieldValidation {
 
   /**
    * Function for trimming the data.
+   * @param string $data
    * 
    * @return string
    */
-  private function trimData(string $data) {
+  public function trimData(string $data) {
     $data = trim($data);
     $data = stripslashes($data);
     $data = htmlspecialchars($data);
@@ -116,7 +117,7 @@ trait FieldValidation {
    * 
    * @return bool
    */
-  private function validateEmail(){
+  public function validateEmail(){
     if ($this->email == '') {
       return FALSE;
     }
@@ -176,26 +177,16 @@ trait FieldValidation {
    * @return bool
    */
   public function thumbnailFormate() {
-    if(isset($this->imageFile['name']) && $this->imageFile['name'] != '') {
-      $target_dir = '../public/thumbnail/';
-      $file_type = $this->imageFile["type"];
-      $file_name= $this->imageFile["name"];
-      $file_size = $this->imageFile["size"];
-      if ($file_type != "image/jpg" && $file_type != "image/png" && $file_type != "image/jpeg" && $file_type != "image/gif") {
-        return FALSE ;
-      }
-      elseif ($file_size > 10000000) {
+    if(!is_null($this->imageFile)){
+      // generate a random name for the file but keep the extension
+      $extension = $this->imageFile->getClientOriginalExtension();
+      if ($extension != 'jpg' && $extension != 'jpeg' && $extension != 'png' && $extension != 'gif') {
         return FALSE;
       }
-      elseif (!file_exists($target_dir . $file_name)) {
-        if (move_uploaded_file($this->imageFile["tmp_name"], $target_dir . $file_name)) {
-          return TRUE;
-        }
-        else {
-          return FALSE;
-        }
-      }
       else {
+        $this->randomPicName = uniqid().".".$this->imageFile->getClientOriginalExtension();
+        $path = "../public/cover/";
+        $this->imageFile->move($path, $this->randomPicName); // move the file to a path
         return TRUE;
       }
     }
@@ -210,26 +201,16 @@ trait FieldValidation {
    * @return bool
    */
   public function picFormate() {
-    if(isset($this->imageFile) && $this->imageFile['name'] != '') {
-      $target_dir = '../public/profile-pictures/';
-      $file_type = $this->imageFile["type"];
-      $file_name= $this->imageFile["name"];
-      $file_size = $this->imageFile["size"];
-      if ($file_type != "image/jpg" && $file_type != "image/png" && $file_type != "image/jpeg") {
+    if(!is_null($this->imageFile)){
+      // generate a random name for the file but keep the extension
+      $extension = $this->imageFile->getClientOriginalExtension();
+      if ($extension != 'jpg' && $extension != 'jpeg' && $extension != 'png') {
         return FALSE;
-      }
-      elseif ($file_size > 100000000) {
-        return FALSE;
-      }
-      elseif (!file_exists($target_dir . $file_name)) {
-        if (move_uploaded_file($this->imageFile["tmp_name"], $target_dir . $file_name)) {
-          return TRUE;
-        }
-        else {
-          return FALSE;
-        }
       }
       else {
+        $this->randomPicName = uniqid().".".$this->imageFile->getClientOriginalExtension();
+        $path = "../public/profilePic/";
+        $this->imageFile->move($path, $this->randomPicName); // move the file to a path
         return TRUE;
       }
     }
@@ -237,27 +218,23 @@ trait FieldValidation {
       return TRUE;
     }
   }
+
+  /**
+   * FUnction to validate the Auio formate
+   * 
+   * F@return bool
+   */
   private function audioFormate() {
-    if(isset($this->song)) {
-      $target_dir = '../public/audio/';
-      $file_type = $this->song["type"];
-      $file_name= $this->song["name"];
-      $file_size = $this->song["size"];
-      if ($file_type != "audio/mpeg") {
+    if(!is_null($this->song)){
+      // generate a random name for the file but keep the extension
+      $extension = $this->song->getClientOriginalExtension();
+      if ($extension != 'mp3' && $extension != 'mpeg') {
         return FALSE;
-      }
-      elseif ($file_size > 900000000) {
-        return FALSE;
-      }
-      elseif (!file_exists($target_dir . $file_name)) {
-        if (move_uploaded_file($this->song["tmp_name"] , $target_dir . $file_name)) {
-          return TRUE;
-        }
-        else {
-          return FALSE;
-        }
       }
       else {
+        $this->randomSongName = uniqid().".".$this->song->getClientOriginalExtension();
+        $path = "../public/songs/";
+        $this->song->move($path, $this->randomSongName); // move the file to a path
         return TRUE;
       }
     }

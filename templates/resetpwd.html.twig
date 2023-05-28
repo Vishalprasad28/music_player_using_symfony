@@ -1,22 +1,10 @@
-<?php
-session_start();
-if (!isset($_COOKIE['mailverified'])) {
-  header('Refresh:0; url=/home');
-}
-else {
-  $uri = $_SERVER['REQUEST_URI'];
-  $array1 = explode("?", $uri);
-  $array2 = explode('=', $array1[1]);
-  $_SESSION['email'] = base64_decode($array2[1]);
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link rel="stylesheet" href="public/style/stylesheet.css">
+		<link rel="stylesheet" href="style/stylesheet.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,8 +15,8 @@ else {
   <div class="container flexing">
     <div class="container-extended flexing flex-justify-between">
       <div class="left">
-        <form action="controller/resetpwdcontroller.php" method="post">
-          <img src="public/assets/lightbluelogo.png" class="form-inline-logo" alt="">
+        <form action="controller/resetpwdcontroller.php" id="Reset-Form" method="post">
+          <img src="assets/lightbluelogo.png" class="form-inline-logo" alt="">
           <h1>Reset Form</h1>
           <div id="pwd-container">
           <i class="fa-solid fa-eye eye-open-icon hide-icon"></i>
@@ -52,10 +40,10 @@ else {
         </form>
       </div>
       <div class="right">
-          <img src="public/assets/headphone.png" alt="">
+          <img src="assets/headphone.png" alt="">
       </div>
     </div> 
   </body>
-  <script src="public/js/livevalidation.js"></script>
-  <script src="public/js/resetpwdvalidation.js"></script>
+  <script src="js/livevalidation.js"></script>
+  <script src="js/formValidator.js"></script>
 </html>

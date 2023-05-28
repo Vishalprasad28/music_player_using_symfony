@@ -16,18 +16,20 @@ $(document).ready(function(){
   var minutes;
   var seconds;
   var like;
-  // $(wave).removeClass('wave-hider');
+  $(wave).removeClass('wave-hider');
   function liked() {
     like = 1;
-    $.post("controller/likeshandler.php",
+
+    $.post("/likesHandler",
     {
       songId: song_id,
       like: like
     });
+
   }
   function disliked() {
     like = 0;
-    $.post("controller/likeshandler.php",
+    $.post("/likesHandler",
     {
       songId: song_id,
       like: like
@@ -35,9 +37,6 @@ $(document).ready(function(){
   }
   function songduration(time) {
     duration = ((time)/60);
-
-    console.log(time);
-
     minutes = parseInt(time/60);
     seconds = parseInt(time % 60);
     if (parseInt(minutes/10) == 0) {
@@ -70,7 +69,6 @@ $(document).ready(function(){
     else {
       $(wave).removeClass('wave-hider');
       song.play();
-      // imageDisk.classList.add('rotation-animation');
       imageDisk.style.animationPlayState = 'running';
       ctrlicon.classList.remove('fa-play');
       ctrlicon.classList.add('fa-pause');

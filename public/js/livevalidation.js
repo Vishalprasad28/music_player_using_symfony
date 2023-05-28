@@ -1,6 +1,6 @@
 $(document).ready(function(){
   $('#email').keyup(function() {
-    var validemail = new RegExp('^[a-z]+[\.0-9a-z]*[+1]*[@]{1}[a-z]+[.]{1}([c][o][m]|[o][r][g])+$')
+    var validemail = new RegExp('^[a-z]+[\.0-9a-z]*[+0-9]*[@]{1}[a-z]+[.]{1}([c][o][m]|[o][r][g])+$')
     var email = $(this).val();
     if(email == ""){
       $('#email-error').addClass("error-msg");

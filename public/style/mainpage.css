@@ -335,7 +335,7 @@ main{
   -webkit-background-clip: text;
   padding:0.5rem;
 }
-.favPosts{
+.favPosts, .trendingList{
   height: 80vh;
   margin-top: 0.5rem;
   padding: 0.5rem 0;
